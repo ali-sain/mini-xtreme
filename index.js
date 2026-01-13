@@ -235,8 +235,10 @@ else if (type === 'interactiveResponseMessage' && mek.message.interactiveRespons
   const q = args.join(' ')
   const text = args.join(' ')
   const isGroup = from.endsWith('@g.us')
-  const sender = mek.key.fromMe ? (conn.user.id.split(':')[0]+'@s.whatsapp.net' || conn.user.id) : (mek.key.participant || mek.key.remoteJid)
-  const senderNumber = sender.split('@')[0]
+  const sender = mek.key.fromMe 
+  ? (conn.user.id.split(':')[0] + '@s.whatsapp.net' || conn.user.id) 
+  : (mek.key.participant || mek.key.remoteJid);
+  const senderNumber = sender.split('@')[0];
   const botNumber = conn.user.id.split(':')[0]
   const pushname = mek.pushName || 'Sin Nombre'
   const isMe = botNumber.includes(senderNumber)
