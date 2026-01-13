@@ -1,9 +1,9 @@
 const { 
-    cmd, 
     sleep,
     isUrl, 
 } = require('../lib');
 const fs = require('fs');
+const { cmd } = require('../command');
 const config = require('../config');
 const isAdmin = require('../lib/admin');
 
