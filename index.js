@@ -30,6 +30,7 @@ const {
   const P = require('pino')
   const config = require('./config')
   const GroupEvents = require('./lib/groupevents');
+  const antiLink = require('./lib/antilink');
   const qrcode = require('qrcode-terminal')
   const StickersTypes = require('wa-sticker-formatter')
   const util = require('util')
@@ -232,6 +233,15 @@ const port = process.env.PORT || 9090;
   const reply = (teks) => {
   conn.sendMessage(from, { text: teks }, { quoted: mek })
   }
+
+  await antiLink(conn, mek, m, {
+    from,
+    isGroup,
+    body,
+    sender,
+    isOwner
+});
+	  
   const udp = botNumber.split('@')[0];
     const jawad = ("528145550802", "528145550802", "528145550802");
     let isCreator = [udp, jawad, config.DEV]
