@@ -207,8 +207,27 @@ const port = process.env.PORT || 9090;
   const type = getContentType(mek.message)
   const content = JSON.stringify(mek.message)
   const from = mek.key.remoteJid
-  const quoted = type == 'extendedTextMessage' && mek.message.extendedTextMessage.contextInfo != null ? mek.message.extendedTextMessage.contextInfo.quotedMessage || [] : []
-  const body = (type === 'conversation') ? mek.message.conversation : (type === 'extendedTextMessage') ? mek.message.extendedTextMessage.text : (type == 'imageMessage') && mek.message.imageMessage.caption ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption ? mek.message.videoMessage.caption : ''
+  const quoted = type === 'extendedTextMessage' && mek.message.extendedTextMessage.contextInfo?.quotedMessage
+  ? mek.message.extendedTextMessage.contextInfo.quotedMessage
+  : null;
+
+// Body extraction (text, caption, button/list IDs)
+let body = '';
+if (type === 'conversation') body = mek.message.conversation;
+else if (type === 'extendedTextMessage') body = mek.message.extendedTextMessage.text;
+else if (type === 'imageMessage') body = mek.message.imageMessage.caption || '';
+else if (type === 'videoMessage') body = mek.message.videoMessage.caption || '';
+else if (type === 'templateButtonReplyMessage') body = mek.message.templateButtonReplyMessage.selectedId || '';
+else if (type === 'buttonsResponseMessage') body = mek.message.buttonsResponseMessage.selectedButtonId || '';
+else if (type === 'listResponseMessage') body = mek.message.listResponseMessage.singleSelectReply?.selectedRowId || '';
+else if (type === 'interactiveResponseMessage' && mek.message.interactiveResponseMessage.nativeFlowResponseMessage?.paramsJson) {
+  try {
+    body = JSON.parse(mek.message.interactiveResponseMessage.nativeFlowResponseMessage.paramsJson).id || '';
+  } catch {
+    body = '';
+  }
+}
+
   const isCmd = body.startsWith(prefix)
   var budy = typeof mek.text == 'string' ? mek.text : false;
   const command = isCmd ? body.slice(prefix.length).trim().split(' ').shift().toLowerCase() : ''
