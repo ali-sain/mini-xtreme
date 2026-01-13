@@ -65,16 +65,29 @@ const {
   // Clear the temp directory every 5 minutes
   setInterval(clearTempDir, 5 * 60 * 1000);
   
-  //===================SESSION-AUTH============================
+//===================SESSION-AUTH============================
 if (!fs.existsSync(__dirname + '/sessions/creds.json')) {
-if(!config.SESSION_ID) return console.log('Please add your session to SESSION_ID env !!')
-const sessdata = config.SESSION_ID.replace("XTREME~XMD~", '');
-const filer = File.fromURL(`https://mega.nz/file/${sessdata}`)
-filer.download((err, data) => {
-if(err) throw err
-fs.writeFile(__dirname + '/sessions/creds.json', data, () => {
-console.log("Session downloaded ✅")
-})})}
+  if (!config.SESSION_ID) {
+    console.log('Please add your session to SESSION_ID env !!')
+    process.exit(1)
+  }
+
+  const sessdata = config.SESSION_ID.replace('XTREME~XMD~', '')
+
+  if (!sessdata.includes('#')) {
+    console.error('Invalid SESSION_ID: MEGA hash (#key) missing')
+    process.exit(1)
+  }
+
+  const megaUrl = `https://mega.nz/file/${sessdata}`
+  const filer = File.fromURL(megaUrl)
+
+  filer.download((err, data) => {
+    if (err) throw err
+    fs.writeFileSync(__dirname + '/sessions/creds.json', data)
+    console.log('Session downloaded ✅')
+  })
+}
 
 const express = require("express");
 const app = express();
